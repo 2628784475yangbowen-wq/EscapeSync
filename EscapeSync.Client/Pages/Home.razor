@@ -1,0 +1,86 @@
+@page "/"
+@inject GameClient Client
+@inject NavigationManager Nav
+
+<PageTitle>EscapeSync</PageTitle>
+
+<div class="landing">
+    <h1>EscapeSync</h1>
+    <p class="subtitle">A cooperative escape-room puzzle for three players.<br/>
+        Each player sees different clues. You must talk to escape.</p>
+
+    <div class="forms">
+        <section class="form-card">
+            <h2>Create a room</h2>
+            <label>Nickname
+                <input @bind="createNickname" maxlength="20" placeholder="Your name" />
+            </label>
+            <button class="primary" @onclick="CreateRoom" disabled="@busy">Create</button>
+        </section>
+
+        <section class="form-card">
+            <h2>Join a room</h2>
+            <label>Nickname
+                <input @bind="joinNickname" maxlength="20" placeholder="Your name" />
+            </label>
+            <label>Room code
+                <input @bind="joinCode" maxlength="8" placeholder="ABCDEF" style="text-transform:uppercase"/>
+            </label>
+            <button class="primary" @onclick="JoinRoom" disabled="@busy">Join</button>
+        </section>
+    </div>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <p class="error">@error</p>
+    }
+
+    <details class="rules">
+        <summary>How to play</summary>
+        <ul>
+            <li>Three roles: Locksmith, Cryptographer, Operator. Assigned by join order.</li>
+            <li>Puzzle 1 &mdash; Locksmith sees colored buttons; Cryptographer sees the cipher + target digits; Operator presses SUBMIT.</li>
+            <li>Puzzle 2 &mdash; Locksmith sees the safe zone; Cryptographer sees the needle; Operator presses ACTIVATE.</li>
+            <li>10-minute timer. 3 lives. 3 hints.</li>
+        </ul>
+    </details>
+</div>
+
+@code {
+    private string createNickname = "";
+    private string joinNickname = "";
+    private string joinCode = "";
+    private string? error;
+    private bool busy;
+
+    private async Task CreateRoom()
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(createNickname)) { error = "Nickname required."; return; }
+        busy = true;
+        try
+        {
+            var result = await Client.CreateRoomAsync(createNickname.Trim());
+            if (!result.Success) { error = result.ErrorMessage; return; }
+            Nav.NavigateTo($"/room/{result.RoomCode}");
+        }
+        catch (Exception ex) { error = "Connection failed: " + ex.Message; }
+        finally { busy = false; }
+    }
+
+    private async Task JoinRoom()
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(joinNickname)) { error = "Nickname required."; return; }
+        if (string.IsNullOrWhiteSpace(joinCode)) { error = "Room code required."; return; }
+        busy = true;
+        try
+        {
+            var result = await Client.JoinRoomAsync(joinCode.Trim().ToUpperInvariant(), joinNickname.Trim());
+            if (!result.Success) { error = result.ErrorMessage; return; }
+            Nav.NavigateTo($"/room/{result.RoomCode}");
+        }
+        catch (Exception ex) { error = "Connection failed: " + ex.Message; }
+        finally { busy = false; }
+    }
+}

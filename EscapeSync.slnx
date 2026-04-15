@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="EscapeSync.Client/EscapeSync.Client.csproj" />
+  <Project Path="EscapeSync.Server/EscapeSync.Server.csproj" />
+  <Project Path="EscapeSync.Shared/EscapeSync.Shared.csproj" />
+</Solution>

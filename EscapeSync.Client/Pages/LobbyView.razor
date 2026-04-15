@@ -1,0 +1,32 @@
+@* Shown while the room stage is Lobby. Host can start once 3 players have joined. *@
+
+<div class="lobby">
+    <h2>Waiting room</h2>
+    <p>Share the room code <strong>@Room.RoomCode</strong> with your teammates.
+        The game begins once three players are in.</p>
+
+    <p>Players: <strong>@Room.Players.Count / 3</strong></p>
+
+    @{
+        var me = Room.Players.FirstOrDefault(p => p.Nickname == Client.MyNickname);
+        var canStart = me?.IsHost == true && Room.Players.Count == 3;
+    }
+
+    @if (me?.IsHost == true)
+    {
+        <button class="primary" disabled="@(!canStart)" @onclick="StartGame">
+            @(canStart ? "Start Game" : $"Waiting for {3 - Room.Players.Count} more player(s)...")
+        </button>
+    }
+    else
+    {
+        <p class="muted">Waiting for host to start...</p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public RoomStateDto Room { get; set; } = default!;
+    [Parameter, EditorRequired] public GameClient Client { get; set; } = default!;
+
+    private Task StartGame() => Client.StartGameAsync();
+}

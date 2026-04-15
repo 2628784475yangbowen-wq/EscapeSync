@@ -1,0 +1,138 @@
+@page "/room/{RoomCode}"
+@implements IDisposable
+@inject GameClient Client
+@inject NavigationManager Nav
+
+<PageTitle>EscapeSync @RoomCode</PageTitle>
+
+@if (Client.Room is null)
+{
+    <div class="loading">Connecting to room @RoomCode...</div>
+}
+else
+{
+    var room = Client.Room;
+    <div class="room-layout">
+        <header class="room-header">
+            <div>
+                <span class="label">Room</span>
+                <span class="code">@room.RoomCode</span>
+            </div>
+            <div class="stage-badge stage-@room.Stage.ToString().ToLowerInvariant()">
+                @StageTitle(room.Stage)
+            </div>
+            <div class="stats">
+                <span title="Time remaining">⏱ @FormatTime(room.SecondsRemaining)</span>
+                <span title="Lives remaining">❤ @room.LivesRemaining</span>
+                <span title="Hints remaining">💡 @room.HintsRemaining</span>
+            </div>
+        </header>
+
+        <section class="players">
+            @foreach (var p in room.Players)
+            {
+                var isMe = p.Nickname == Client.MyNickname;
+                <div class="player @(isMe ? "me" : "")">
+                    <span class="role role-@p.Role.ToString().ToLowerInvariant()">@p.Role</span>
+                    <span class="name">@p.Nickname @(p.IsHost ? "(host)" : "")</span>
+                </div>
+            }
+            @for (var i = room.Players.Count; i < 3; i++)
+            {
+                <div class="player empty">
+                    <span class="role">Empty</span>
+                    <span class="name">Waiting...</span>
+                </div>
+            }
+        </section>
+
+        <main class="stage-area">
+            @switch (room.Stage)
+            {
+                case GameStage.Lobby:
+                    <LobbyView Room="room" Client="Client"/>
+                    break;
+                case GameStage.Puzzle1:
+                    <Puzzle1View View="Client.RoleView" Client="Client"/>
+                    break;
+                case GameStage.Puzzle2:
+                    <Puzzle2View View="Client.RoleView" Client="Client"/>
+                    break;
+                case GameStage.Won:
+                    <EndView Won="true"/>
+                    break;
+                case GameStage.Lost:
+                    <EndView Won="false"/>
+                    break;
+            }
+
+            @if (!string.IsNullOrEmpty(room.LastHintText))
+            {
+                <div class="hint-banner">💡 @room.LastHintText</div>
+            }
+            @if (!string.IsNullOrEmpty(room.LastFeedback))
+            {
+                <div class="feedback-banner">@room.LastFeedback</div>
+            }
+
+            @if (room.Stage is GameStage.Puzzle1 or GameStage.Puzzle2)
+            {
+                <div class="global-actions">
+                    <button @onclick="RequestHint" disabled="@(room.HintsRemaining <= 0)">
+                        Use Hint (@room.HintsRemaining left)
+                    </button>
+                </div>
+            }
+
+            @if (room.Stage is GameStage.Won or GameStage.Lost)
+            {
+                <button class="primary" @onclick="Leave">Back to Home</button>
+            }
+        </main>
+
+        <aside class="chat-panel">
+            <ChatPanel Room="room" Client="Client"/>
+        </aside>
+    </div>
+}
+
+@code {
+    [Parameter] public string RoomCode { get; set; } = "";
+
+    protected override void OnInitialized()
+    {
+        Client.StateChanged += OnStateChanged;
+        // If the user landed here directly without going through Home, bounce back.
+        if (Client.Room is null && !Client.IsConnected) Nav.NavigateTo("/");
+    }
+
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+
+    private Task RequestHint() => Client.RequestHintAsync();
+
+    private async Task Leave()
+    {
+        await Client.LeaveRoomAsync();
+        Client.Reset();
+        Nav.NavigateTo("/");
+    }
+
+    public void Dispose() => Client.StateChanged -= OnStateChanged;
+
+    private static string StageTitle(GameStage stage) => stage switch
+    {
+        GameStage.Lobby => "Lobby",
+        GameStage.Puzzle1 => "Puzzle 1 — Combination Lock",
+        GameStage.Puzzle2 => "Puzzle 2 — Timed Mechanism",
+        GameStage.Won => "Escaped!",
+        GameStage.Lost => "Mission Failed",
+        _ => stage.ToString()
+    };
+
+    private static string FormatTime(int seconds)
+    {
+        var m = seconds / 60;
+        var s = seconds % 60;
+        return $"{m:D2}:{s:D2}";
+    }
+}

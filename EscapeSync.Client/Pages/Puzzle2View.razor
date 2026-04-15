@@ -1,0 +1,53 @@
+@* Dispatches to the correct role-specific view for Puzzle 2. *@
+
+@if (View is null)
+{
+    <p class="muted">Loading your view...</p>
+}
+else if (View.P2Locksmith is { } loc)
+{
+    <div class="puzzle p2-locksmith">
+        <h2>Locksmith</h2>
+        <p class="muted">You see only the safe-zone bounds. Call them out to the Operator.</p>
+        <div class="range-display">
+            <div class="zone-label">Safe zone</div>
+            <div class="zone-numbers">@loc.SafeZoneStart — @loc.SafeZoneEnd</div>
+        </div>
+        <div class="track">
+            @{
+                var left = loc.SafeZoneStart;
+                var width = loc.SafeZoneEnd - loc.SafeZoneStart;
+            }
+            <div class="zone" style="left: @(left)%; width: @(width)%"></div>
+        </div>
+    </div>
+}
+else if (View.P2Cryptographer is { } cry)
+{
+    <div class="puzzle p2-cryptographer">
+        <h2>Cryptographer</h2>
+        <p class="muted">You see the live needle position. Call it out to the Operator.</p>
+        <div class="range-display">
+            <div class="zone-label">Needle</div>
+            <div class="zone-numbers">@cry.NeedlePosition</div>
+        </div>
+        <div class="track">
+            <div class="needle" style="left: @(cry.NeedlePosition)%"></div>
+        </div>
+    </div>
+}
+else if (View.P2Operator is { } op)
+{
+    <div class="puzzle p2-operator">
+        <h2>Operator</h2>
+        <p class="muted">Listen to your teammates. Fire ACTIVATE when the needle is in the safe zone.</p>
+        <button class="primary big" disabled="@(!op.CanActivate)" @onclick="Activate">ACTIVATE</button>
+    </div>
+}
+
+@code {
+    [Parameter] public RoleViewDto? View { get; set; }
+    [Parameter, EditorRequired] public GameClient Client { get; set; } = default!;
+
+    private Task Activate() => Client.ActivateAsync();
+}

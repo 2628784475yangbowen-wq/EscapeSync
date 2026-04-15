@@ -1,0 +1,38 @@
+@* Simple in-room chat. Renders every message in Room.ChatLog and lets the user send. *@
+
+<div class="chat">
+    <h3>Chat</h3>
+    <div class="messages">
+        @if (Room.ChatLog.Count == 0)
+        {
+            <p class="muted">No messages yet. Coordinate here or talk aloud.</p>
+        }
+        @foreach (var msg in Room.ChatLog)
+        {
+            var mine = msg.Nickname == Client.MyNickname;
+            <div class="msg @(mine ? "mine" : "")">
+                <span class="who">@msg.Nickname</span>
+                <span class="txt">@msg.Text</span>
+            </div>
+        }
+    </div>
+    <form @onsubmit="Send" @onsubmit:preventDefault>
+        <input @bind="draft" @bind:event="oninput" maxlength="280" placeholder="Type and press Enter" />
+        <button type="submit" disabled="@string.IsNullOrWhiteSpace(draft)">Send</button>
+    </form>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public RoomStateDto Room { get; set; } = default!;
+    [Parameter, EditorRequired] public GameClient Client { get; set; } = default!;
+
+    private string draft = "";
+
+    private async Task Send()
+    {
+        if (string.IsNullOrWhiteSpace(draft)) return;
+        var text = draft;
+        draft = "";
+        await Client.SendChatAsync(text);
+    }
+}

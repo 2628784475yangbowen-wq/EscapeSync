@@ -1,0 +1,89 @@
+@* Dispatches to the correct role-specific view for Puzzle 1. *@
+
+@if (View is null)
+{
+    <p class="muted">Loading your view...</p>
+}
+else if (View.P1Locksmith is { } loc)
+{
+    <div class="puzzle p1-locksmith">
+        <h2>Locksmith</h2>
+        <p class="muted">Press colored buttons in the order your teammates tell you.
+            You can't see digits, only colors.</p>
+
+        <div class="pips">
+            @for (var i = 0; i < loc.SlotCount; i++)
+            {
+                var filled = i < loc.CurrentGuess.Count ? loc.CurrentGuess[i] : (LockColor?)null;
+                <div class="pip @(filled is null ? "empty" : "color-" + filled.ToString()!.ToLowerInvariant())"></div>
+            }
+        </div>
+
+        <div class="color-buttons">
+            @foreach (var c in System.Enum.GetValues<LockColor>())
+            {
+                <button class="color-btn color-@c.ToString().ToLowerInvariant()"
+                        disabled="@(loc.CurrentGuess.Count >= loc.SlotCount)"
+                        @onclick="() => Press(c)">@c</button>
+            }
+        </div>
+    </div>
+}
+else if (View.P1Cryptographer is { } cry)
+{
+    <div class="puzzle p1-cryptographer">
+        <h2>Cryptographer</h2>
+        <p class="muted">Translate the target digits through the cipher and tell the Locksmith
+            the color sequence. You cannot press anything.</p>
+
+        <h3>Target digits (in order)</h3>
+        <div class="digits">
+            @foreach (var d in cry.TargetDigits)
+            {
+                <div class="digit">@d</div>
+            }
+        </div>
+
+        <h3>Cipher</h3>
+        <div class="cipher">
+            @foreach (var pair in cry.CipherTable)
+            {
+                <div class="cipher-row">
+                    <span class="swatch color-@pair.Key.ToString().ToLowerInvariant()"></span>
+                    <span class="color-name">@pair.Key</span>
+                    <span class="equals">=</span>
+                    <span class="digit-small">@pair.Value</span>
+                </div>
+            }
+        </div>
+    </div>
+}
+else if (View.P1Operator is { } op)
+{
+    <div class="puzzle p1-operator">
+        <h2>Operator</h2>
+        <p class="muted">Confirm the Locksmith's entries. Submit when all four pips are filled.</p>
+
+        <div class="pips">
+            @for (var i = 0; i < op.SlotCount; i++)
+            {
+                var filled = i < op.CurrentGuess.Count ? op.CurrentGuess[i] : (LockColor?)null;
+                <div class="pip @(filled is null ? "empty" : "color-" + filled.ToString()!.ToLowerInvariant())"></div>
+            }
+        </div>
+
+        <div class="operator-controls">
+            <button @onclick="Clear">Clear</button>
+            <button class="primary" disabled="@(!op.CanSubmit)" @onclick="Submit">Submit</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public RoleViewDto? View { get; set; }
+    [Parameter, EditorRequired] public GameClient Client { get; set; } = default!;
+
+    private Task Press(LockColor c) => Client.PressColorAsync(c);
+    private Task Clear() => Client.ClearGuessAsync();
+    private Task Submit() => Client.SubmitGuessAsync();
+}

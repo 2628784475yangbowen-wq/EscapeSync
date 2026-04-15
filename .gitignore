@@ -1,0 +1,66 @@
+# ===== .NET =====
+bin/
+obj/
+*.user
+*.userprefs
+*.suo
+*.cache
+*.dll
+*.pdb
+*.exe
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+artifacts/
+publish/
+out/
+
+# ===== EF Core / SQLite =====
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+escapesync.db*
+
+# ===== Blazor WASM build output =====
+*.Client/bin/
+*.Client/obj/
+wwwroot/dist/
+_framework/
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== NuGet =====
+*.nupkg
+packages/
+.nuget/
+
+# ===== IDEs =====
+# Visual Studio
+.vs/
+*.VisualState.json
+
+# Rider
+.idea/
+
+# VS Code — keep shared config under .vscode/, ignore machine-local settings
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== User secrets / local config =====
+*.user
+appsettings.Local.json
+secrets.json

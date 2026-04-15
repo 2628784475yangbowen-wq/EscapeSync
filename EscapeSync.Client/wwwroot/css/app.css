@@ -1,0 +1,395 @@
+/* ===== EscapeSync app styles ===== */
+
+:root {
+    --bg: #0f1221;
+    --panel: #1a1e36;
+    --panel-2: #242947;
+    --accent: #4ad1ff;
+    --accent-strong: #1a9ed4;
+    --text: #e7ecf7;
+    --muted: #98a0bc;
+    --danger: #ff5a6a;
+    --success: #3ed598;
+    --warning: #ffd166;
+    --border: #2e3458;
+    --red: #ff5a6a;
+    --blue: #4ad1ff;
+    --green: #3ed598;
+    --yellow: #ffd166;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: radial-gradient(ellipse at top, #1c2142 0%, var(--bg) 60%);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+h1, h2, h3 { font-weight: 600; letter-spacing: 0.02em; }
+h1 { font-size: 2.5rem; margin: 0 0 .5rem; }
+h2 { font-size: 1.4rem; margin: 0 0 .75rem; }
+h3 { font-size: 1.05rem; margin: 1rem 0 .5rem; color: var(--muted); }
+a { color: var(--accent); }
+
+.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+
+button {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .55rem 1.1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+}
+button:hover:not(:disabled) { background: #2e335a; }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { opacity: .4; cursor: not-allowed; }
+button.primary {
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-strong) 100%);
+    border-color: var(--accent-strong);
+    color: #0a0e1e;
+    font-weight: 700;
+}
+button.primary:hover:not(:disabled) { filter: brightness(1.1); }
+button.big { font-size: 1.6rem; padding: 1.4rem 3rem; border-radius: 12px; }
+
+input {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .5rem .75rem;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+label { display: block; margin-bottom: .75rem; color: var(--muted); font-size: .9rem; }
+label input { margin-top: .25rem; }
+
+.muted { color: var(--muted); }
+.error { color: var(--danger); font-weight: 500; margin-top: 1rem; }
+
+/* ===== Landing page ===== */
+.landing {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+.landing .subtitle { color: var(--muted); margin-bottom: 2.5rem; }
+.landing .forms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    text-align: left;
+}
+.form-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+.form-card h2 { margin-top: 0; }
+.rules {
+    margin-top: 2rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .75rem 1rem;
+    text-align: left;
+}
+.rules summary { cursor: pointer; font-weight: 500; }
+
+/* ===== Room layout ===== */
+.room-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+        "header header"
+        "players chat"
+        "stage chat";
+    gap: 1rem;
+    padding: 1rem;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+.room-header {
+    grid-area: header;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: .75rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.room-header .label { color: var(--muted); margin-right: .5rem; font-size: .85rem; }
+.room-header .code { font-size: 1.4rem; font-weight: 700; letter-spacing: .2em; }
+.room-header .stats { display: flex; gap: 1.25rem; font-size: 1.1rem; }
+.stage-badge {
+    padding: .4rem .9rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: .95rem;
+}
+.stage-lobby { background: #2e335a; }
+.stage-puzzle1 { background: rgba(74, 209, 255, .2); color: var(--accent); }
+.stage-puzzle2 { background: rgba(62, 213, 152, .2); color: var(--success); }
+.stage-won { background: rgba(62, 213, 152, .3); color: var(--success); }
+.stage-lost { background: rgba(255, 90, 106, .25); color: var(--danger); }
+
+.players {
+    grid-area: players;
+    display: flex;
+    gap: 1rem;
+}
+.player {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+.player.me { border-color: var(--accent); }
+.player.empty { opacity: .5; }
+.player .role { font-size: .75rem; text-transform: uppercase; letter-spacing: .15em; color: var(--muted); }
+.player .role.role-locksmith { color: var(--yellow); }
+.player .role.role-cryptographer { color: var(--accent); }
+.player .role.role-operator { color: var(--success); }
+.player .name { font-weight: 600; }
+
+.stage-area {
+    grid-area: stage;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    min-height: 400px;
+}
+.hint-banner {
+    margin-top: 1rem;
+    background: rgba(255, 209, 102, .15);
+    color: var(--warning);
+    padding: .6rem 1rem;
+    border-left: 3px solid var(--warning);
+    border-radius: 4px;
+}
+.feedback-banner {
+    margin-top: .75rem;
+    color: var(--muted);
+    font-style: italic;
+    font-size: .95rem;
+}
+.global-actions { margin-top: 1rem; }
+
+/* ===== Chat ===== */
+.chat-panel { grid-area: chat; }
+.chat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    min-height: 400px;
+}
+.chat h3 { margin-top: 0; color: var(--text); }
+.chat .messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: .75rem;
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+}
+.msg { font-size: .9rem; padding: .25rem 0; }
+.msg .who { font-weight: 600; color: var(--accent); margin-right: .4rem; }
+.msg.mine .who { color: var(--success); }
+.chat form { display: flex; gap: .5rem; }
+.chat form input { flex: 1; }
+
+/* ===== Puzzle 1 ===== */
+.pips {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+    margin: 2rem 0;
+}
+.pip {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px dashed var(--border);
+    background: var(--panel-2);
+}
+.pip.empty { border-style: dashed; }
+.pip:not(.empty) { border-style: solid; box-shadow: 0 0 16px currentColor; }
+.color-red { background: var(--red); color: var(--red); border-color: var(--red); }
+.color-blue { background: var(--blue); color: var(--blue); border-color: var(--blue); }
+.color-green { background: var(--green); color: var(--green); border-color: var(--green); }
+.color-yellow { background: var(--yellow); color: var(--yellow); border-color: var(--yellow); }
+
+.color-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+.color-btn {
+    color: #0a0e1e;
+    font-weight: 700;
+    padding: 1rem 1.75rem;
+    border: none;
+    font-size: 1.05rem;
+}
+
+.digits {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+.digit {
+    width: 54px;
+    height: 68px;
+    border-radius: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Consolas', monospace;
+}
+.cipher {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .5rem 2rem;
+}
+.cipher-row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--panel-2);
+    padding: .35rem .75rem;
+    border-radius: 6px;
+}
+.swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+}
+.color-name { flex: 1; font-weight: 500; }
+.digit-small {
+    font-family: 'Consolas', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.operator-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+/* ===== Puzzle 2 ===== */
+.range-display {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0 .5rem;
+    align-items: baseline;
+}
+.zone-label { color: var(--muted); text-transform: uppercase; font-size: .75rem; letter-spacing: .15em; }
+.zone-numbers {
+    font-family: 'Consolas', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+.track {
+    position: relative;
+    height: 44px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: .5rem;
+}
+.track .zone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(62, 213, 152, .45), rgba(62, 213, 152, .15));
+    border-left: 2px solid var(--success);
+    border-right: 2px solid var(--success);
+}
+.track .needle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--warning);
+    box-shadow: 0 0 10px var(--warning);
+    transform: translateX(-1.5px);
+    transition: left .2s linear;
+}
+
+.p2-operator { text-align: center; margin-top: 2rem; }
+
+/* ===== Lobby / End ===== */
+.lobby { text-align: center; padding-top: 2rem; }
+.end { text-align: center; padding-top: 2rem; }
+.end.won h2 { color: var(--success); font-size: 2.5rem; }
+.end.lost h2 { color: var(--danger); font-size: 2.5rem; }
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color: var(--muted);
+}
+
+#blazor-error-ui {
+    background: #b32121;
+    color: white;
+    bottom: 0;
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+#blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: .75rem; top: .5rem; }
+#blazor-error-ui a { color: white; text-decoration: underline; }
+
+.blazor-error-boundary {
+    background: #b32121;
+    padding: 1rem;
+    color: white;
+    border-radius: 8px;
+}
+.blazor-error-boundary::after { content: "An error has occurred."; }
+
+.loading-progress { position: absolute; display: block; width: 8rem; height: 8rem; inset: 20vh 0 auto 0; margin: 0 auto; }
+.loading-progress circle { fill: none; stroke: #2e3458; stroke-width: .6rem; transform-origin: 50% 50%; transform: rotate(-90deg); }
+.loading-progress circle:last-child { stroke: var(--accent); stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * .8), 500%; transition: stroke-dasharray .05s ease-in-out; }
+.loading-progress-text { position: absolute; text-align: center; font-weight: bold; inset: calc(20vh + 3.25rem) 0 auto .2rem; color: var(--muted); }
+.loading-progress-text:after { content: var(--blazor-load-percentage-text, "Loading EscapeSync"); }
