@@ -20,7 +20,22 @@ CPS 3330 Spring 2026 final project — Alisha Patel, Bowen Yang Adam, Stone Xu T
 - `EscapeSync.Server` — ASP.NET Core host, SignalR `GameHub`, in-memory `GameManager`, EF Core persistence for finished games.
 - `EscapeSync.Client` — Blazor WebAssembly single-page app.
 
-## How to run
+## Open in VS Code
+
+```
+code EscapeSync
+```
+
+On first open, VS Code will prompt to install the recommended extensions
+(`.vscode/extensions.json`): C# Dev Kit, C# language support, .NET runtime,
+and the Blazor WASM companion. Accept them.
+
+- **Build:** `Ctrl+Shift+B` (runs the `build-solution` task)
+- **Run/Debug:** open the *Run and Debug* sidebar → choose
+  **Run Server + Client** → press ▶. This launches both projects together;
+  the Blazor client opens in your browser.
+
+## How to run from the command line
 
 Open two terminals.
 
@@ -71,3 +86,19 @@ launch (EF Core `EnsureCreated`).
   records are persisted to SQLite — matching the demo scope for this project.
 - A `GameTickerService` background host advances the countdown timer and the
   Puzzle 2 needle for every active room at 5 Hz.
+
+## Push to GitHub
+
+The repo is already initialized with an initial commit on the `main` branch.
+
+1. Create an empty repository on GitHub (no README, no license, no `.gitignore` —
+   we already have them) — for example `https://github.com/<you>/EscapeSync`.
+2. Add the remote and push:
+
+   ```
+   git remote add origin https://github.com/<you>/EscapeSync.git
+   git push -u origin main
+   ```
+
+If you want to use SSH instead, swap the URL for
+`git@github.com:<you>/EscapeSync.git`.
