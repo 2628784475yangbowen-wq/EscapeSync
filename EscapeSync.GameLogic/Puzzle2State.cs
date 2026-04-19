@@ -1,20 +1,16 @@
-namespace EscapeSync.Server.Game;
+namespace EscapeSync.GameLogic;
 
-/// <summary>
-/// Authoritative state for the timed-mechanism puzzle.
-/// A needle oscillates 0..100 and back; Operator must press ACTIVATE while it's in the safe zone.
-/// Locksmith sees the zone bounds; Cryptographer sees the position.
-/// </summary>
-public class Puzzle2State
+public sealed class Puzzle2State
 {
     private const int SafeZoneWidth = 15;
-    private const float NeedleSpeed = 35f; // units per second
+    private const float NeedleSpeed = 35f;
 
     public int SafeZoneStart { get; init; }
     public int SafeZoneEnd { get; init; }
 
     private float _position;
-    private int _direction = 1; // +1 ascending, -1 descending
+    private int _direction = 1;
+
     public int NeedlePosition => (int)Math.Round(_position);
 
     public bool NeedleInSafeZone() => NeedlePosition >= SafeZoneStart && NeedlePosition <= SafeZoneEnd;
@@ -32,7 +28,6 @@ public class Puzzle2State
         };
     }
 
-    /// <summary>Moves the needle forward by <paramref name="deltaMilliseconds"/>, bouncing at 0/100.</summary>
     public void Advance(int deltaMilliseconds)
     {
         if (deltaMilliseconds <= 0) return;

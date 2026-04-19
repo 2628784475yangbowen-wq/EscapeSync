@@ -1,0 +1,54 @@
+@if (View is null)
+{
+    <p class="muted">Loading your view...</p>
+}
+else if (View.P3Locksmith is { } loc)
+{
+    <div class="puzzle p3-locksmith">
+        <h2>Locksmith</h2>
+        <p class="muted">You see only the left half of the door code (two digits). Read them clearly to the Operator.</p>
+        <div class="door-code-display">@loc.LeftDigits</div>
+    </div>
+}
+else if (View.P3Cryptographer is { } cry)
+{
+    <div class="puzzle p3-cryptographer">
+        <h2>Cryptographer</h2>
+        <p class="muted">You see only the right half of the door code (two digits). Read them clearly to the Operator.</p>
+        <div class="door-code-display">@cry.RightDigits</div>
+    </div>
+}
+else if (View.P3Operator is { } op)
+{
+    <div class="puzzle p3-operator">
+        <h2>Operator</h2>
+        <p class="muted">Enter the four-digit code in order: left panel digits, then right panel digits.</p>
+        <div class="door-slots">
+            @for (var i = 0; i < op.Slots.Count; i++)
+            {
+                var v = op.Slots[i];
+                <div class="door-slot">@(v?.ToString() ?? "—")</div>
+            }
+        </div>
+        <div class="digit-keypad">
+            @foreach (var d in Enumerable.Range(0, 10))
+            {
+                var digit = d;
+                <button type="button" class="digit-btn" disabled="@(op.Slots.All(x => x != null))" @onclick="() => Push(digit)">@digit</button>
+            }
+        </div>
+        <div class="operator-controls">
+            <button type="button" @onclick="Clear">Clear</button>
+            <button type="button" class="primary" disabled="@(!op.CanSubmit)" @onclick="Submit">Submit</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public RoleViewDto? View { get; set; }
+    [Parameter, EditorRequired] public GameClient Client { get; set; } = default!;
+
+    private Task Push(int d) => Client.PushDoorDigitAsync(d);
+    private Task Clear() => Client.ClearDoorEntryAsync();
+    private Task Submit() => Client.SubmitDoorEntryAsync();
+}

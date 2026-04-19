@@ -24,6 +24,9 @@ public static class HubMethods
     public const string ClearGuess = "ClearGuess";
     public const string SubmitGuess = "SubmitGuess";
     public const string Activate = "Activate";
+    public const string PushDoorDigit = "PushDoorDigit";
+    public const string ClearDoorEntry = "ClearDoorEntry";
+    public const string SubmitDoorEntry = "SubmitDoorEntry";
     public const string RequestHint = "RequestHint";
     public const string SendChat = "SendChat";
     public const string LeaveRoom = "LeaveRoom";

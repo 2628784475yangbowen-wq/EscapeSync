@@ -1,10 +1,10 @@
 @* Shown in Won / Lost stages. *@
 
-<div class="end @(Won ? "won" : "lost")">
+<div class="end @(Won ? "won" : "lost") depth-panel end-screen">
     <h2>@(Won ? "You Escaped!" : "Mission Failed")</h2>
     <p>@(Won
-        ? "Your team solved every puzzle before the timer ran out. The result was recorded."
-        : "The timer expired or you ran out of lives. Better luck next time.")</p>
+        ? "Your team cleared all three cooperative puzzles before the timer ran out. The result was recorded."
+        : "The timer expired, you ran out of lives, a player left, or the final code was wrong too many times.")</p>
 </div>
 
 @code {

@@ -57,6 +57,12 @@ public record Puzzle2CryptographerView(int NeedlePosition);
 /// </summary>
 public record Puzzle2OperatorView(bool CanActivate);
 
+public record Puzzle3LocksmithView(string LeftDigits);
+
+public record Puzzle3CryptographerView(string RightDigits);
+
+public record Puzzle3OperatorView(IReadOnlyList<int?> Slots, bool CanSubmit);
+
 /// <summary>
 /// Snapshot of the whole room sent to every client after each state change.
 /// Per-role puzzle views are delivered separately via RoleView messages.
@@ -83,7 +89,10 @@ public record RoleViewDto(
     Puzzle1OperatorView? P1Operator = null,
     Puzzle2LocksmithView? P2Locksmith = null,
     Puzzle2CryptographerView? P2Cryptographer = null,
-    Puzzle2OperatorView? P2Operator = null);
+    Puzzle2OperatorView? P2Operator = null,
+    Puzzle3LocksmithView? P3Locksmith = null,
+    Puzzle3CryptographerView? P3Cryptographer = null,
+    Puzzle3OperatorView? P3Operator = null);
 
 /// <summary>
 /// Result of a join attempt returned to the caller.

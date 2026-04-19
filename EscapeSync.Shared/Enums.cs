@@ -19,8 +19,9 @@ public enum GameStage
     Lobby = 0,
     Puzzle1 = 1,
     Puzzle2 = 2,
-    Won = 3,
-    Lost = 4
+    Puzzle3 = 3,
+    Won = 4,
+    Lost = 5
 }
 
 /// <summary>

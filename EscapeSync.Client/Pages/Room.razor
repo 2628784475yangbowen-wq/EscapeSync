@@ -7,13 +7,25 @@
 
 @if (Client.Room is null)
 {
-    <div class="loading">Connecting to room @RoomCode...</div>
+    <div class="loading scene-loading">
+        <div class="loading-panel">
+            <span class="loading-ring" aria-hidden="true"></span>
+            <p>Connecting to room <strong>@RoomCode</strong></p>
+        </div>
+    </div>
 }
 else
 {
     var room = Client.Room;
-    <div class="room-layout">
-        <header class="room-header">
+    <div class="room-layout scene-room">
+        <div class="room-scape" aria-hidden="true">
+            <div class="scape-wall scape-wall-left"></div>
+            <div class="scape-wall scape-wall-right"></div>
+            <div class="scape-floor"></div>
+            <div class="scape-door"></div>
+            <div class="scape-beam"></div>
+        </div>
+        <header class="room-header hud-bar casefile-hud">
             <div>
                 <span class="label">Room</span>
                 <span class="code">@room.RoomCode</span>
@@ -22,9 +34,9 @@ else
                 @StageTitle(room.Stage)
             </div>
             <div class="stats">
-                <span title="Time remaining">⏱ @FormatTime(room.SecondsRemaining)</span>
-                <span title="Lives remaining">❤ @room.LivesRemaining</span>
-                <span title="Hints remaining">💡 @room.HintsRemaining</span>
+                <span class="stat-pill @(room.SecondsRemaining <= 120 ? "stat-pill-urgent" : "")" title="Time remaining"><span class="stat-label">Time</span><span class="stat-value">@FormatTime(room.SecondsRemaining)</span></span>
+                <span class="stat-pill" title="Lives remaining"><span class="stat-label">Lives</span><span class="stat-value">@room.LivesRemaining</span></span>
+                <span class="stat-pill" title="Hints remaining"><span class="stat-label">Hints</span><span class="stat-value">@room.HintsRemaining</span></span>
             </div>
         </header>
 
@@ -32,21 +44,21 @@ else
             @foreach (var p in room.Players)
             {
                 var isMe = p.Nickname == Client.MyNickname;
-                <div class="player @(isMe ? "me" : "")">
+                <div class="player @(isMe ? "me" : "") personnel-card">
                     <span class="role role-@p.Role.ToString().ToLowerInvariant()">@p.Role</span>
                     <span class="name">@p.Nickname @(p.IsHost ? "(host)" : "")</span>
                 </div>
             }
             @for (var i = room.Players.Count; i < 3; i++)
             {
-                <div class="player empty">
+                <div class="player empty personnel-card">
                     <span class="role">Empty</span>
                     <span class="name">Waiting...</span>
                 </div>
             }
         </section>
 
-        <main class="stage-area">
+        <main class="stage-area stage-console dossier-console">
             @switch (room.Stage)
             {
                 case GameStage.Lobby:
@@ -58,6 +70,9 @@ else
                 case GameStage.Puzzle2:
                     <Puzzle2View View="Client.RoleView" Client="Client"/>
                     break;
+                case GameStage.Puzzle3:
+                    <Puzzle3View View="Client.RoleView" Client="Client"/>
+                    break;
                 case GameStage.Won:
                     <EndView Won="true"/>
                     break;
@@ -68,14 +83,14 @@ else
 
             @if (!string.IsNullOrEmpty(room.LastHintText))
             {
-                <div class="hint-banner">💡 @room.LastHintText</div>
+                <div class="hint-banner">@room.LastHintText</div>
             }
             @if (!string.IsNullOrEmpty(room.LastFeedback))
             {
                 <div class="feedback-banner">@room.LastFeedback</div>
             }
 
-            @if (room.Stage is GameStage.Puzzle1 or GameStage.Puzzle2)
+            @if (room.Stage is GameStage.Puzzle1 or GameStage.Puzzle2 or GameStage.Puzzle3)
             {
                 <div class="global-actions">
                     <button @onclick="RequestHint" disabled="@(room.HintsRemaining <= 0)">
@@ -90,7 +105,7 @@ else
             }
         </main>
 
-        <aside class="chat-panel">
+        <aside class="chat-panel chat-stack">
             <ChatPanel Room="room" Client="Client"/>
         </aside>
     </div>
@@ -124,6 +139,7 @@ else
         GameStage.Lobby => "Lobby",
         GameStage.Puzzle1 => "Puzzle 1 — Combination Lock",
         GameStage.Puzzle2 => "Puzzle 2 — Timed Mechanism",
+        GameStage.Puzzle3 => "Puzzle 3 — Final Door",
         GameStage.Won => "Escaped!",
         GameStage.Lost => "Mission Failed",
         _ => stage.ToString()

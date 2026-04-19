@@ -71,6 +71,9 @@ public class GameClient : IAsyncDisposable
     public Task ClearGuessAsync() => Invoke(HubMethods.ClearGuess);
     public Task SubmitGuessAsync() => Invoke(HubMethods.SubmitGuess);
     public Task ActivateAsync() => Invoke(HubMethods.Activate);
+    public Task PushDoorDigitAsync(int digit) => Invoke(HubMethods.PushDoorDigit, digit);
+    public Task ClearDoorEntryAsync() => Invoke(HubMethods.ClearDoorEntry);
+    public Task SubmitDoorEntryAsync() => Invoke(HubMethods.SubmitDoorEntry);
     public Task RequestHintAsync() => Invoke(HubMethods.RequestHint);
     public Task SendChatAsync(string text) => Invoke(HubMethods.SendChat, text);
     public Task LeaveRoomAsync() => Invoke(HubMethods.LeaveRoom);

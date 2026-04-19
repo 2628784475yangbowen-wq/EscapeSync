@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text;
+using EscapeSync.GameLogic;
 using EscapeSync.Server.Data;
 using EscapeSync.Shared;
 using Microsoft.AspNetCore.SignalR;
@@ -155,6 +156,49 @@ public class GameManager
         await BroadcastAsync(room);
     }
 
+    public async Task PushDoorDigitAsync(string connectionId, int digit)
+    {
+        var room = RoomForConnection(connectionId);
+        if (room is null) return;
+        await room.Sync.WaitAsync();
+        try
+        {
+            if (!room.Players.TryGetValue(connectionId, out var p)) return;
+            room.PushDoorDigit(p, digit);
+        }
+        finally { room.Sync.Release(); }
+        await BroadcastAsync(room);
+    }
+
+    public async Task ClearDoorEntryAsync(string connectionId)
+    {
+        var room = RoomForConnection(connectionId);
+        if (room is null) return;
+        await room.Sync.WaitAsync();
+        try
+        {
+            if (!room.Players.TryGetValue(connectionId, out var p)) return;
+            room.ClearDoorEntry(p);
+        }
+        finally { room.Sync.Release(); }
+        await BroadcastAsync(room);
+    }
+
+    public async Task SubmitDoorEntryAsync(string connectionId)
+    {
+        var room = RoomForConnection(connectionId);
+        if (room is null) return;
+        await room.Sync.WaitAsync();
+        try
+        {
+            if (!room.Players.TryGetValue(connectionId, out var p)) return;
+            room.SubmitDoorEntry(p);
+        }
+        finally { room.Sync.Release(); }
+        await PersistIfFinishedAsync(room);
+        await BroadcastAsync(room);
+    }
+
     public async Task RequestHintAsync(string connectionId)
     {
         var room = RoomForConnection(connectionId);
@@ -225,7 +269,7 @@ public class GameManager
             try
             {
                 stageBefore = room.Stage;
-                if (stageBefore is GameStage.Puzzle1 or GameStage.Puzzle2)
+                if (stageBefore is GameStage.Puzzle1 or GameStage.Puzzle2 or GameStage.Puzzle3)
                 {
                     room.Tick(deltaMilliseconds);
                     changed = true;
@@ -253,7 +297,7 @@ public class GameManager
 
         // Role-specific views are sent only to the relevant connection.
         // Only emit role views while a puzzle is active.
-        if (snapshot.Stage is GameStage.Puzzle1 or GameStage.Puzzle2)
+        if (snapshot.Stage is GameStage.Puzzle1 or GameStage.Puzzle2 or GameStage.Puzzle3)
         {
             List<(string ConnId, RoleViewDto View)> views;
             await room.Sync.WaitAsync();

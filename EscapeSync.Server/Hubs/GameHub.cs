@@ -35,6 +35,9 @@ public class GameHub : Hub
     public Task ClearGuess() => _manager.ClearGuessAsync(Context.ConnectionId);
     public Task SubmitGuess() => _manager.SubmitGuessAsync(Context.ConnectionId);
     public Task Activate() => _manager.ActivateAsync(Context.ConnectionId);
+    public Task PushDoorDigit(int digit) => _manager.PushDoorDigitAsync(Context.ConnectionId, digit);
+    public Task ClearDoorEntry() => _manager.ClearDoorEntryAsync(Context.ConnectionId);
+    public Task SubmitDoorEntry() => _manager.SubmitDoorEntryAsync(Context.ConnectionId);
     public Task RequestHint() => _manager.RequestHintAsync(Context.ConnectionId);
     public Task SendChat(string text) => _manager.SendChatAsync(Context.ConnectionId, text);
     public Task LeaveRoom() => _manager.LeaveAsync(Context.ConnectionId);

@@ -19,12 +19,17 @@ else if (View.P1Locksmith is { } loc)
             }
         </div>
 
-        <div class="color-buttons">
+        <div class="color-keys" role="group" aria-label="Lock colors">
             @foreach (var c in System.Enum.GetValues<LockColor>())
             {
-                <button class="color-btn color-@c.ToString().ToLowerInvariant()"
+                var cls = c.ToString().ToLowerInvariant();
+                <button type="button"
+                        class="color-key color-key-@cls"
                         disabled="@(loc.CurrentGuess.Count >= loc.SlotCount)"
-                        @onclick="() => Press(c)">@c</button>
+                        @onclick="() => Press(c)">
+                    <span class="color-key-bulb" aria-hidden="true"></span>
+                    <span class="color-key-label">@c</span>
+                </button>
             }
         </div>
     </div>

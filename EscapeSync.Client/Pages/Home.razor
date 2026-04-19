@@ -4,13 +4,15 @@
 
 <PageTitle>EscapeSync</PageTitle>
 
-<div class="landing">
-    <h1>EscapeSync</h1>
-    <p class="subtitle">A cooperative escape-room puzzle for three players.<br/>
-        Each player sees different clues. You must talk to escape.</p>
+<div class="landing scene-landing">
+    <header class="hero-block">
+        <h1 class="hero-title">EscapeSync</h1>
+        <p class="subtitle">A cooperative escape-room puzzle for three players.<br/>
+            Each player sees different clues. You must talk to escape.</p>
+    </header>
 
     <div class="forms">
-        <section class="form-card">
+        <section class="form-card depth-card">
             <h2>Create a room</h2>
             <label>Nickname
                 <input @bind="createNickname" maxlength="20" placeholder="Your name" />
@@ -18,7 +20,7 @@
             <button class="primary" @onclick="CreateRoom" disabled="@busy">Create</button>
         </section>
 
-        <section class="form-card">
+        <section class="form-card depth-card">
             <h2>Join a room</h2>
             <label>Nickname
                 <input @bind="joinNickname" maxlength="20" placeholder="Your name" />
@@ -35,13 +37,14 @@
         <p class="error">@error</p>
     }
 
-    <details class="rules">
+    <details class="rules depth-card rules-panel">
         <summary>How to play</summary>
         <ul>
             <li>Three roles: Locksmith, Cryptographer, Operator. Assigned by join order.</li>
             <li>Puzzle 1 &mdash; Locksmith sees colored buttons; Cryptographer sees the cipher + target digits; Operator presses SUBMIT.</li>
             <li>Puzzle 2 &mdash; Locksmith sees the safe zone; Cryptographer sees the needle; Operator presses ACTIVATE.</li>
-            <li>10-minute timer. 3 lives. 3 hints.</li>
+            <li>Puzzle 3 &mdash; Locksmith and Cryptographer each see two digits of the door; Operator enters the four-digit code.</li>
+            <li>30-minute timer. 3 lives. 3 hints.</li>
         </ul>
     </details>
 </div>
