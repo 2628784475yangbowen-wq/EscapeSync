@@ -4,4 +4,5 @@
   <Project Path="EscapeSync.GameLogic.Tests/EscapeSync.GameLogic.Tests.csproj" />
   <Project Path="EscapeSync.Server/EscapeSync.Server.csproj" />
   <Project Path="EscapeSync.Shared/EscapeSync.Shared.csproj" />
+  <Project Path="EscapeSync.Server.Tests/EscapeSync.Server.Tests.csproj" />
 </Solution>
